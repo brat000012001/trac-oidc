@@ -6,7 +6,10 @@
 """
 from __future__ import absolute_import
 
-from collections import Mapping
+try:
+    from collections.abc import Mapping
+except ImportError:    
+    from collections import Mapping
 
 
 def strings_differ(string1, string2):

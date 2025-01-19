@@ -8,7 +8,10 @@ from __future__ import absolute_import
 
 from io import BytesIO
 from itertools import islice
-from urllib import urlencode
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
 
 import mock                     # FIXME: use trac.test.Mock?
 import pytest
@@ -368,12 +371,12 @@ class TestUserDatabase(object):
     def test_find_session_by_oidc_subject(self, userdb, helper, caplog):
         helper.find_session_by_attr.return_value = ['user1', 'user2']
         assert userdb.find_session_by_oidc_subject('iss', 'sub') == 'user1'
-        assert "Multiple users share the same oidc iss" in caplog.text()
+        assert "Multiple users share the same oidc iss" in caplog.text
 
     def test_find_session_by_openid_id(self, userdb, helper, caplog):
         helper.find_session_by_attr.return_value = ['user1', 'user2']
         assert userdb.find_session_by_openid_id('id') == 'user1'
-        assert "Multiple users share the same openid url" in caplog.text()
+        assert "Multiple users share the same openid url" in caplog.text
 
     def test_associate_session(self, env, userdb):
         userdb.associate_session('foo', 'https://example.net', '42')

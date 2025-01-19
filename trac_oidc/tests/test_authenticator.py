@@ -8,7 +8,10 @@ from __future__ import absolute_import
 
 import json
 import logging
-from urlparse import parse_qsl, urlsplit, urlunsplit
+try:
+    from urllib.parse import urlsplit,parse_qsl,urlunsplit
+except ImportError:
+     from urlparse import parse_qsl, urlsplit
 
 import mock
 from oauth2client.client import FlowExchangeError
@@ -183,7 +186,7 @@ class TestAuthenticator(object):
         content = b'{"foo": "bar"}'
         http.request.return_value = resp, content
         assert authenticator._get_openid_profile(credentials) == {}
-        assert 'Failed to retrieve profile' in caplog.text()
+        assert 'Failed to retrieve profile' in caplog.text
 
     def test_get_openid_profile_bad_json(self, authenticator, caplog):
         credentials = mock.Mock(name='credentials')
@@ -192,4 +195,4 @@ class TestAuthenticator(object):
         content = b'}'
         http.request.return_value = resp, content
         assert authenticator._get_openid_profile(credentials) == {}
-        assert 'Response is not valid JSON' in caplog.text()
+        assert 'Response is not valid JSON' in caplog.text

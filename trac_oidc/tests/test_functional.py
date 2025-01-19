@@ -13,11 +13,24 @@ import logging
 import os
 import re
 from shutil import rmtree
-from StringIO import StringIO
+
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
+
 import sys
 from tempfile import mkdtemp
-from urllib import urlencode
-from urlparse import parse_qsl, urlsplit
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
+try:
+    from urllib.parse import urlsplit
+    from urllib.parse import parse_qsl
+except ImportError:
+     from urlparse import parse_qsl, urlsplit
 
 import pytest
 from trac.admin.console import TracAdmin
@@ -66,7 +79,7 @@ def trac_admin(env_path, *commands):
 def env_path(request):
     env_path = mkdtemp(suffix='.env')
     request.addfinalizer(partial(rmtree, env_path))
-    trac_admin(env_path, 'initenv testenv sqlite:db/trac.db svn ""')
+    trac_admin(env_path, 'initenv testenv sqlite:db/trac.db""')
 
     # Create dummy client_secret.json
     web_secrets = {
